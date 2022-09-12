@@ -1,0 +1,10 @@
+{
+  "name": "chrome-ext",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Malo Grall <malo.grall@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/chrome": "^0.0.196"
+  }
+}
