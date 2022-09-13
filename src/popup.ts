@@ -5,7 +5,7 @@ interface PageEntry {
   parent: string | null
 }
 
-// let stychContent: PageEntry[] = []
+let stychContent: PageEntry[] = []
 
 function chunkedRead (key: string) {
   return new Promise(resolve => {
@@ -30,9 +30,10 @@ function chunkedRead (key: string) {
 }
 
 chunkedRead('stychContent').then(data => {
-  console.log(data)
+  stychContent = data as PageEntry[]
+
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  // document.querySelector('#stychPagesCount')!.innerHTML = JSON.parse(stychContentNbChunks as string).length
+  document.querySelector('#stychPagesCount')!.innerHTML = `${stychContent.length} entries`
 })
 
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -57,6 +58,7 @@ changeColor.addEventListener('click', async () => {
 
   // Extract only the result from the promise: page method results
   const result = (await Promise.all(tabExecPromises)).reduce((acc, tabResult) => {
+    if (!tabResult[0].result) return acc
     return [...acc, ...tabResult[0].result]
   }, [] as PageEntry[])
 
@@ -72,6 +74,7 @@ const getPagesFromTab = (): PageEntry[] => {
   const root: PageEntry[] = []
 
   // Fiche page, get sub titles
+  console.log(window.location.pathname)
   if (window.location.pathname.includes('fiche-cours')) {
     document.querySelectorAll('h2').forEach(title => {
       if (title) {
@@ -92,11 +95,12 @@ const getPagesFromTab = (): PageEntry[] => {
     document.querySelectorAll('#sheets .item-title').forEach(e => {
       if (e) {
         const parentId = window.location.pathname.split('/').slice(-2).join('/')
-        const pageId = (e as HTMLAnchorElement).href.split('/').slice(-2).join('/')
+        const pageId = (e.nodeName === 'DIV' ? (e as HTMLDivElement).querySelector('a') : (e as HTMLAnchorElement))?.href.split('/').slice(-2).join('/')
+        console.log(pageId)
 
         // If parent course page, no parent
         const course: PageEntry = {
-          id: pageId,
+          id: pageId || '',
           title: e.textContent?.trim() || '',
           link: (e as HTMLAnchorElement).href,
           parent: null
