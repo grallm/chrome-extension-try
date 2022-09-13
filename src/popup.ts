@@ -5,23 +5,34 @@ interface PageEntry {
   parent: string | null
 }
 
-let stychContent: PageEntry[] = []
+// let stychContent: PageEntry[] = []
 
-chrome.storage.sync.get('stychContentNbChunks', ({ stychContentNbChunks }) => {
-  // Fetch and merge content chunks
-  let stychContentStr = ''
-  for (let i = 0; i < stychContentNbChunks; i++) {
-    chrome.storage.sync.get(`stychContent_${i}`, ({ [`stychContent_${i}`]: chunk }) => {
-      stychContentStr += chunk
+function chunkedRead (key: string) {
+  return new Promise(resolve => {
+    if (typeof key !== 'string') key = `${key}`
+    const keyNum = key + '#'
+    chrome.storage.sync.get(keyNum, data => {
+      const num = data[keyNum]
+      const keys = []
+      for (let i = 0; i < num; i++) {
+        keys[i] = key + i
+      }
+      chrome.storage.sync.get(keys, data => {
+        const chunks = []
+        for (let i = 0; i < num; i++) {
+          chunks.push(data[key + i] || '')
+        }
+        const str = chunks.join('')
+        resolve(str ? JSON.parse(str) : undefined)
+      })
     })
-  }
+  })
+}
 
-  console.log('stychContentStr', stychContentStr)
-  stychContent = JSON.parse(stychContentStr)
-  console.log(stychContent)
-
+chunkedRead('stychContent').then(data => {
+  console.log(data)
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  document.querySelector('#stychPagesCount')!.innerHTML = JSON.parse(stychContentNbChunks as string).length
+  // document.querySelector('#stychPagesCount')!.innerHTML = JSON.parse(stychContentNbChunks as string).length
 })
 
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
