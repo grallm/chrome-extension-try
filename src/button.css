@@ -5,6 +5,7 @@ button {
   margin: 10px;
   border: none;
   border-radius: 2px;
+  background-color: aqua;
 }
 
 button.current {
