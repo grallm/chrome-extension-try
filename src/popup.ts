@@ -1,11 +1,5 @@
+import { MessageSearchText, MessageTypes, PageEntry } from './types'
 import { chunkedRead } from './utils/ChromeSyncChunks.utils'
-
-interface PageEntry {
-  id: string
-  title: string,
-  link: string,
-  parent: string | null
-}
 
 let stychContent: PageEntry[] = []
 
@@ -107,3 +101,23 @@ openPages?.addEventListener('click', async () => {
     chrome.tabs.create({ url: page.link })
   }
 })
+
+// Search when input changes
+document.querySelector('#searchInput')?.addEventListener('input', async (e) => {
+  // Input text
+  const text = (e.target as HTMLInputElement).value
+
+  if (text) {
+    // Send message to background
+    const message: MessageSearchText = {
+      type: MessageTypes.SEARCH_TEXT,
+      text
+    }
+    chrome.runtime.sendMessage(message, function (response) {
+      console.log('response')
+      console.log(response)
+    })
+  }
+})
+// Block form submit
+document.querySelector('#searchForm')?.addEventListener('submit', e => e.preventDefault())
