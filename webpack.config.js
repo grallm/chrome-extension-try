@@ -34,5 +34,8 @@ module.exports = {
   mode: 'production',
   optimization: {
     minimize: false
+  },
+  resolve: {
+    extensions: ['.ts', '.js']
   }
 }

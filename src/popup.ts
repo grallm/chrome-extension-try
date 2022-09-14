@@ -1,3 +1,5 @@
+import { chunkedRead } from './utils/ChromeSyncChunks.utils'
+
 interface PageEntry {
   id: string
   title: string,
@@ -7,28 +9,7 @@ interface PageEntry {
 
 let stychContent: PageEntry[] = []
 
-function chunkedRead (key: string) {
-  return new Promise(resolve => {
-    if (typeof key !== 'string') key = `${key}`
-    const keyNum = key + '#'
-    chrome.storage.sync.get(keyNum, data => {
-      const num = data[keyNum]
-      const keys = []
-      for (let i = 0; i < num; i++) {
-        keys[i] = key + i
-      }
-      chrome.storage.sync.get(keys, data => {
-        const chunks = []
-        for (let i = 0; i < num; i++) {
-          chunks.push(data[key + i] || '')
-        }
-        const str = chunks.join('')
-        resolve(str ? JSON.parse(str) : undefined)
-      })
-    })
-  })
-}
-
+// Add number of entries in popup
 chunkedRead('stychContent').then(data => {
   stychContent = data as PageEntry[]
 
@@ -36,11 +17,12 @@ chunkedRead('stychContent').then(data => {
   document.querySelector('#stychPagesCount')!.innerHTML = `${stychContent.length} entries`
 })
 
-// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-const changeColor = document.getElementById('changeColor')!
+// Popup action buttons
+const fetchContent = document.getElementById('fetchContent')
+const openPages = document.getElementById('openPages')
 
 // When the button is clicked, inject setPageBackgroundColor into current page
-changeColor.addEventListener('click', async () => {
+fetchContent?.addEventListener('click', async () => {
   const tabs = await chrome.tabs.query({
     url: 'https://www.stych.fr/*'
   })
@@ -118,3 +100,10 @@ const getPagesFromTab = (): PageEntry[] => {
 
   return root
 }
+
+// Open all pages in new tabs
+openPages?.addEventListener('click', async () => {
+  for (const page of stychContent) {
+    chrome.tabs.create({ url: page.link })
+  }
+})
