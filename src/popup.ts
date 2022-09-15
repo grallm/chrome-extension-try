@@ -72,14 +72,16 @@ const getPagesFromTab = (): PageEntry[] => {
     document.querySelectorAll('#sheets .item-title').forEach(e => {
       if (e) {
         const parentId = window.location.pathname.split('/').slice(-2).join('/')
-        const pageId = (e.nodeName === 'DIV' ? (e as HTMLDivElement).querySelector('a') : (e as HTMLAnchorElement))?.href.split('/').slice(-2).join('/')
+        const urlElem = e.nodeName === 'DIV' ? (e as HTMLDivElement).querySelector('a') : e as HTMLAnchorElement
+        const pageId = urlElem?.href.split('/').slice(-2).join('/')
+        console.log(urlElem?.href)
         console.log(pageId)
 
         // If parent course page, no parent
         const course: PageEntry = {
           id: pageId || '',
           title: e.textContent?.trim() || '',
-          link: (e as HTMLAnchorElement).href,
+          link: urlElem?.href || '',
           parent: null
         }
 
@@ -118,10 +120,7 @@ document.querySelector('#searchInput')?.addEventListener('input', async (e) => {
       type: MessageTypes.SEARCH_TEXT,
       text
     }
-    console.log('search')
-    console.log(message)
     chrome.runtime.sendMessage(message, function (response) {
-      console.log('response')
       console.log(response)
     })
   }

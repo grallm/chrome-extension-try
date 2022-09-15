@@ -16,7 +16,7 @@ for (const page of stychContentDb) {
 }
 
 chrome.runtime.onInstalled.addListener(() => {
-  console.log(`Added ${stychContentDb.length} Stych categories`)
+  console.log(`Added ${stychContentDb.length} Stych entries`)
 })
 
 // Receiving messages from popup
