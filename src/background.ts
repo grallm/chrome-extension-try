@@ -1,10 +1,7 @@
-import { chunkedWrite } from './utils/ChromeSyncChunks.utils'
 import stychContentDb from '../public/data/stych-content.json'
 import { Message, MessageTypes } from './types'
 
 chrome.runtime.onInstalled.addListener(() => {
-  chunkedWrite('stychContent', stychContentDb)
-
   console.log(`Added ${stychContentDb.length} Stych categories`)
 })
 

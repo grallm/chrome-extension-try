@@ -1,14 +1,15 @@
-import { MessageSearchText, MessageTypes, PageEntry } from './types'
-import { chunkedRead } from './utils/ChromeSyncChunks.utils'
-
-let stychContent: PageEntry[] = []
+import { Message, MessageSearchText, MessageTypes, PageEntry } from './types'
 
 // Add number of entries in popup
-chunkedRead('stychContent').then(data => {
-  stychContent = data as PageEntry[]
-
+// Send message to background
+const message: Message = {
+  type: MessageTypes.GET_NUMBER_ENTRIES
+}
+chrome.runtime.sendMessage(message, function (response: number) {
+  console.log(message)
+  console.log(response)
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  document.querySelector('#stychPagesCount')!.innerHTML = `${stychContent.length} entries`
+  document.querySelector('#stychPagesCount')!.innerHTML = `${response} entries`
 })
 
 // Popup action buttons
@@ -97,9 +98,9 @@ const getPagesFromTab = (): PageEntry[] => {
 
 // Open all pages in new tabs
 openPages?.addEventListener('click', async () => {
-  for (const page of stychContent) {
-    chrome.tabs.create({ url: page.link })
-  }
+  // for (const page of stychContent) {
+  //   chrome.tabs.create({ url: page.link })
+  // }
 })
 
 // Search when input changes
