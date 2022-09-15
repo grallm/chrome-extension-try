@@ -6,8 +6,6 @@ const message: Message = {
   type: MessageTypes.GET_NUMBER_ENTRIES
 }
 chrome.runtime.sendMessage(message, function (response: number) {
-  console.log(message)
-  console.log(response)
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   document.querySelector('#stychPagesCount')!.innerHTML = `${response} entries`
 })
@@ -39,7 +37,6 @@ fetchContent?.addEventListener('click', async () => {
     return [...acc, ...tabResult[0].result]
   }, [] as PageEntry[])
 
-  console.log(result)
   await navigator.clipboard.writeText(JSON.stringify(result))
   alert('Copied to clipboard')
 })
@@ -51,7 +48,6 @@ const getPagesFromTab = (): PageEntry[] => {
   const root: PageEntry[] = []
 
   // Fiche page, get sub titles
-  console.log(window.location.pathname)
   if (window.location.pathname.includes('fiche-cours')) {
     document.querySelectorAll('h2').forEach(title => {
       if (title) {
@@ -74,8 +70,6 @@ const getPagesFromTab = (): PageEntry[] => {
         const parentId = window.location.pathname.split('/').slice(-2).join('/')
         const urlElem = e.nodeName === 'DIV' ? (e as HTMLDivElement).querySelector('a') : e as HTMLAnchorElement
         const pageId = urlElem?.href.split('/').slice(-2).join('/')
-        console.log(urlElem?.href)
-        console.log(pageId)
 
         // If parent course page, no parent
         const course: PageEntry = {
@@ -110,19 +104,25 @@ openPages?.addEventListener('click', async () => {
 })
 
 // Search when input changes
+const resultContainer = document.querySelector('#resultContainer')
 document.querySelector('#searchInput')?.addEventListener('input', async (e) => {
   // Input text
   const text = (e.target as HTMLInputElement).value
 
-  if (text) {
+  if (resultContainer) {
+    if (text) {
     // Send message to background
-    const message: MessageSearchText = {
-      type: MessageTypes.SEARCH_TEXT,
-      text
+      const message: MessageSearchText = {
+        type: MessageTypes.SEARCH_TEXT,
+        text
+      }
+      chrome.runtime.sendMessage(message, function (response: PageEntry[]) {
+        const resultsHtml = response.map(({ title, link }) => `<li><a target="_blank" href="${link}">${title}</a></li>`)
+        resultContainer.innerHTML = resultsHtml.join('')
+      })
+    } else {
+      resultContainer.innerHTML = ''
     }
-    chrome.runtime.sendMessage(message, function (response) {
-      console.log(response)
-    })
   }
 })
 // Block form submit

@@ -21,7 +21,6 @@ chrome.runtime.onInstalled.addListener(() => {
 
 // Receiving messages from popup
 chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) => {
-  console.log('message', message)
   switch (message.type) {
     case MessageTypes.SEARCH_TEXT:
       // Search document

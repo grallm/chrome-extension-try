@@ -1,16 +1,23 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel="stylesheet" href="button.css">
+    <link rel="stylesheet" href="popup.css">
+    <meta charset="utf-8">
   </head>
   <body>
     <p id="stychPagesCount"></p>
-    <button id="fetchContent" class="bg-btn">Fetch all content</button>
-    <button id="openPages" class="bg-btn">Open all pages</button>
+
+    <div id="btnContainer">
+      <button id="fetchContent" class="bg-btn">Fetch all content</button>
+      <button id="openPages" class="bg-btn">Open all pages</button>
+    </div>
 
     <form id="searchForm">
       <input type="search" id="searchInput" placeholder="Search">
     </form>
+
+    <ul id="resultContainer">
+    </ul>
 
     <script src="popup.js"></script>
   </body>

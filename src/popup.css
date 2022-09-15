@@ -1,0 +1,33 @@
+#btnContainer {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+}
+button.bg-btn {
+  height: 30px;
+  width: 100px;
+  border: none;
+  border-radius: 2px;
+  background-color: aqua;
+}
+
+button.current {
+  box-shadow: 0 0 0 2px white,
+              0 0 0 4px black;
+}
+
+body {
+  width: 300px;
+}
+
+form, input {
+  width: 100%;
+}
+
+#resultContainer {
+  font-size: 14px;
+  padding-left: 0;
+}
+#resultContainer > li {
+  padding-bottom: 10px;
+}
