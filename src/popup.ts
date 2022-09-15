@@ -98,9 +98,13 @@ const getPagesFromTab = (): PageEntry[] => {
 
 // Open all pages in new tabs
 openPages?.addEventListener('click', async () => {
-  // for (const page of stychContent) {
-  //   chrome.tabs.create({ url: page.link })
-  // }
+  // Send message to background
+  const message: Message = {
+    type: MessageTypes.GET_ALL_ENTRIES
+  }
+  chrome.runtime.sendMessage(message, function (pages: PageEntry[]) {
+    pages.forEach(page => chrome.tabs.create({ url: page.link }))
+  })
 })
 
 // Search when input changes

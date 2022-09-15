@@ -7,7 +7,8 @@ export interface PageEntry {
 
 export enum MessageTypes {
   GET_NUMBER_ENTRIES,
-  SEARCH_TEXT
+  SEARCH_TEXT,
+  GET_ALL_ENTRIES
 }
 
 export interface Message {
@@ -18,6 +19,6 @@ export interface MessageSearchText extends Message {
   text: string
 }
 
-export interface ResponseSearchText {
+export interface ResponsePageEntries {
   pages: PageEntry[]
 }

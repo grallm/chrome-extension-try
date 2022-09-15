@@ -14,6 +14,9 @@ chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) =>
     case MessageTypes.GET_NUMBER_ENTRIES:
       sendResponse(stychContentDb.length)
       break
+    case MessageTypes.GET_ALL_ENTRIES:
+      sendResponse(stychContentDb)
+      break
     default:
       sendResponse('error')
   }
