@@ -1,5 +1,18 @@
 import stychContentDb from '../public/data/stych-content.json'
-import { Message, MessageTypes } from './types'
+import { Message, MessageSearchText, MessageTypes } from './types'
+import { Document } from 'flexsearch'
+
+// Init text search index
+const index = new Document({
+  document: {
+    id: 'id',
+    index: 'title',
+    store: true
+  }
+})
+for (const page of stychContentDb) {
+  index.add(page)
+}
 
 chrome.runtime.onInstalled.addListener(() => {
   console.log(`Added ${stychContentDb.length} Stych categories`)
@@ -7,9 +20,13 @@ chrome.runtime.onInstalled.addListener(() => {
 
 // Receiving messages from popup
 chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) => {
+  console.log('message', message)
   switch (message.type) {
     case MessageTypes.SEARCH_TEXT:
-      sendResponse('result')
+      sendResponse(index.search(
+        (message as MessageSearchText).text,
+        { limit: 10, enrich: true }
+      ))
       break
     case MessageTypes.GET_NUMBER_ENTRIES:
       sendResponse(stychContentDb.length)

@@ -118,6 +118,8 @@ document.querySelector('#searchInput')?.addEventListener('input', async (e) => {
       type: MessageTypes.SEARCH_TEXT,
       text
     }
+    console.log('search')
+    console.log(message)
     chrome.runtime.sendMessage(message, function (response) {
       console.log('response')
       console.log(response)
