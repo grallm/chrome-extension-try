@@ -1,4 +1,4 @@
-import { getPagesFromTab } from '../dom-manipulation'
+import { addSaveAnswerBtn, getPagesFromTab } from '../dom-manipulation'
 import { Message, MessageSearchText, MessageTypes, PageEntry } from '../types'
 
 // Add number of entries in popup
@@ -77,3 +77,15 @@ document.querySelector('#searchInput')?.addEventListener('input', async (e) => {
 })
 // Block form submit
 document.querySelector('#searchForm')?.addEventListener('submit', e => e.preventDefault())
+
+document.querySelector('#saveAnswBtn')?.addEventListener('click', async () => {
+  console.log('click')
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
+
+  if (tab.id) {
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      func: addSaveAnswerBtn
+    })
+  }
+})
