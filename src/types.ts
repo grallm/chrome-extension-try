@@ -22,3 +22,9 @@ export interface MessageSearchText extends Message {
 export interface ResponsePageEntries {
   pages: PageEntry[]
 }
+
+export interface QuestionSolution {
+  serieId: string
+  date: number
+  questionId: string
+}
