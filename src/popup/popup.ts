@@ -1,5 +1,6 @@
-import { addSaveAnswerBtn, getPagesFromTab } from '../dom-manipulation'
-import { Message, MessageSearchText, MessageTypes, PageEntry } from '../types'
+import { addSaveAnswerBtn, getQuestionId } from '../dom/answer-save'
+import { getPagesFromTab } from '../dom/stych-fetch'
+import { Message, MessageSearchText, MessageTypes, PageEntry, QuestionSolution } from '../types'
 
 // Add number of entries in popup
 // Send message to background
@@ -61,7 +62,7 @@ document.querySelector('#searchInput')?.addEventListener('input', async (e) => {
 
   if (resultContainer) {
     if (text) {
-    // Send message to background
+      // Send message to background
       const message: MessageSearchText = {
         type: MessageTypes.SEARCH_TEXT,
         text
@@ -83,9 +84,42 @@ document.querySelector('#saveAnswBtn')?.addEventListener('click', async () => {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
 
   if (tab.id) {
-    chrome.scripting.executeScript({
+    const tabResult = await chrome.scripting.executeScript({
       target: { tabId: tab.id },
       func: addSaveAnswerBtn
     })
+
+    if (tabResult[0].result) {
+      const button = tabResult[0].result
+      console.log('button', button)
+      button.addEventListener('click', () => saveAnswStore(tab.id))
+    }
   }
 })
+
+// Save answer to storage
+function saveAnswStore (tabId: number | undefined) {
+  console.log('save', tabId)
+  if (!tabId) return
+
+  chrome.storage.sync.get('stychAnsw', async function (data) {
+    const serieId = new URLSearchParams(window.location.search).get('serieId') || ''
+
+    const questionIdQuery = await chrome.scripting.executeScript({
+      target: { tabId },
+      func: getQuestionId
+    })
+
+    const questionId = questionIdQuery[0].result
+
+    if (questionId && serieId) {
+      const answ: QuestionSolution[] = [...data.stychAnsw, {
+        serieId,
+        questionId,
+        date: Date.now()
+      }]
+      console.log(answ)
+      chrome.storage.sync.set({ stychAnsw: answ })
+    }
+  })
+}
