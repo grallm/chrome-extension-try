@@ -1,6 +1,7 @@
 import stychContentDb from '../public/data/stych-content.json'
 import { Message, MessageSaveAnswer, MessageSearchText, MessageTypes, PageEntry, QuestionSolution } from './types'
 import { Document } from 'flexsearch'
+import { addSaveAnswerBtn } from './dom/answer-save'
 
 // Init text search index
 const index = new Document<PageEntry, true>({
@@ -16,7 +17,8 @@ for (const page of stychContentDb) {
 }
 
 chrome.runtime.onInstalled.addListener(() => {
-  console.log(`Added ${stychContentDb.length} Stych entries`)
+  // eslint-disable-next-line no-console
+  console.info(`Added ${stychContentDb.length} Stych entries`)
 })
 
 // Receiving messages from popup
@@ -66,8 +68,26 @@ function saveAnswStore (questionId: string, serieId: string) {
 
       return 'success'
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error(e)
       return 'error'
     }
   })
 }
+
+// Add save answer button when correct URL loads
+chrome.tabs.onUpdated.addListener(async function (tabId, changeInfo) {
+  if (changeInfo.status === 'complete') {
+    // Check if correct tab and URL
+    chrome.tabs.get(tabId, async function (tab) {
+      if (tab.id && tab.url?.includes('application.prepacode-enpc.fr/player?seriesId=')) {
+        // Execute script to add button
+        chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: addSaveAnswerBtn
+        })
+      }
+    }
+    )
+  }
+})

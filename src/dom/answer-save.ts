@@ -3,41 +3,44 @@ import { MessageSaveAnswer, MessageTypes } from '../types'
 /**
  * Add a button to save answer
  */
-export function addSaveAnswerBtn (): 'success' | 'error' {
-  const questionId = window.document.querySelector('.current-question-index')?.textContent?.trim()
 
-  if (questionId) {
-    const btnContainer = document.querySelector('.answers')
+export function addSaveAnswerBtn () {
+  const addBtnInterval = setInterval(() => {
+    // Check if correct page loaded
+    const questionId = window.document.querySelector('.current-question-index')?.textContent?.trim()
 
-    if (btnContainer) {
-      // Delete if exists
-      document.querySelector('#saveAnswerBtn')?.remove()
+    if (questionId) {
+      clearInterval(addBtnInterval)
 
-      const saveBtn = document.createElement('button')
-      saveBtn.id = 'saveAnswerBtn'
-      saveBtn.textContent = 'Save answer'
-      saveBtn.style.marginRight = 'auto'
-      saveBtn.style.cursor = 'pointer'
+      // Don't add button if already added
+      if (window.document.querySelector('#saveAnswerBtn')) return
 
-      btnContainer.prepend(saveBtn)
+      const btnContainer = document.querySelector('.answers')
 
-      saveBtn.addEventListener('click', () => {
-        // Send message to background
-        const questionId = window.document.querySelector('.current-question-index')?.textContent?.trim() ?? ''
-        const serieId = new URLSearchParams(window.location.search).get('seriesId') || ''
+      if (btnContainer) {
+        const saveBtn = document.createElement('button')
+        saveBtn.id = 'saveAnswerBtn'
+        saveBtn.textContent = 'Save answer'
+        saveBtn.style.marginRight = 'auto'
+        saveBtn.style.cursor = 'pointer'
 
-        const message: MessageSaveAnswer = {
-          type: MessageTypes.SAVE_ANSWER,
-          questionId,
-          serieId
-        }
-        chrome.runtime.sendMessage(message)
-      })
+        btnContainer.prepend(saveBtn)
 
-      return 'success'
+        saveBtn.addEventListener('click', () => {
+          // Send message to background
+          const questionId = window.document.querySelector('.current-question-index')?.textContent?.trim() ?? ''
+          const serieId = new URLSearchParams(window.location.search).get('seriesId') || ''
+
+          const message: MessageSaveAnswer = {
+            type: MessageTypes.SAVE_ANSWER,
+            questionId,
+            serieId
+          }
+          chrome.runtime.sendMessage(message)
+        })
+      }
     }
-  }
-  return 'error'
+  }, 500)
 }
 
 /**

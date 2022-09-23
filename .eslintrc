@@ -9,6 +9,8 @@
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended"
   ],
-   "rules": { },
-   "ignorePatterns": "dist/"
+  "rules": {
+    "no-console": 1
+  },
+  "ignorePatterns": "dist/"
 }

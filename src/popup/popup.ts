@@ -1,4 +1,3 @@
-import { addSaveAnswerBtn } from '../dom/answer-save'
 import { getPagesFromTab } from '../dom/stych-fetch'
 import { Message, MessageSearchText, MessageTypes, PageEntry } from '../types'
 
@@ -78,19 +77,3 @@ document.querySelector('#searchInput')?.addEventListener('input', async (e) => {
 })
 // Block form submit
 document.querySelector('#searchForm')?.addEventListener('submit', e => e.preventDefault())
-
-document.querySelector('#saveAnswBtn')?.addEventListener('click', async () => {
-  console.log('click')
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
-
-  if (tab.id) {
-    const tabResult = await chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      func: addSaveAnswerBtn
-    })
-
-    if (tabResult[0].result === 'error') {
-      alert('Error while adding save button')
-    }
-  }
-})

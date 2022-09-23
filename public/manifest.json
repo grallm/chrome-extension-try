@@ -6,8 +6,16 @@
   "background": {
     "service_worker": "background.js"
   },
-  "permissions": ["storage", "activeTab", "scripting", "tabs"],
-  "host_permissions": ["*://*.stych.fr/*", "*://*.prepacode-enpc.fr/*"],
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "*://*.stych.fr/*",
+    "*://*.prepacode-enpc.fr/*"
+  ],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
