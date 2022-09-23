@@ -1,6 +1,6 @@
-import { addSaveAnswerBtn, getQuestionId } from '../dom/answer-save'
+import { addSaveAnswerBtn } from '../dom/answer-save'
 import { getPagesFromTab } from '../dom/stych-fetch'
-import { Message, MessageSearchText, MessageTypes, PageEntry, QuestionSolution } from '../types'
+import { Message, MessageSearchText, MessageTypes, PageEntry } from '../types'
 
 // Add number of entries in popup
 // Send message to background
@@ -89,37 +89,8 @@ document.querySelector('#saveAnswBtn')?.addEventListener('click', async () => {
       func: addSaveAnswerBtn
     })
 
-    if (tabResult[0].result) {
-      const button = tabResult[0].result
-      console.log('button', button)
-      button.addEventListener('click', () => saveAnswStore(tab.id))
+    if (tabResult[0].result === 'error') {
+      alert('Error while adding save button')
     }
   }
 })
-
-// Save answer to storage
-function saveAnswStore (tabId: number | undefined) {
-  console.log('save', tabId)
-  if (!tabId) return
-
-  chrome.storage.sync.get('stychAnsw', async function (data) {
-    const serieId = new URLSearchParams(window.location.search).get('serieId') || ''
-
-    const questionIdQuery = await chrome.scripting.executeScript({
-      target: { tabId },
-      func: getQuestionId
-    })
-
-    const questionId = questionIdQuery[0].result
-
-    if (questionId && serieId) {
-      const answ: QuestionSolution[] = [...data.stychAnsw, {
-        serieId,
-        questionId,
-        date: Date.now()
-      }]
-      console.log(answ)
-      chrome.storage.sync.set({ stychAnsw: answ })
-    }
-  })
-}

@@ -1,8 +1,9 @@
+import { MessageSaveAnswer, MessageTypes } from '../types'
 
 /**
  * Add a button to save answer
  */
-export function addSaveAnswerBtn (): HTMLButtonElement | null {
+export function addSaveAnswerBtn (): 'success' | 'error' {
   const questionId = window.document.querySelector('.current-question-index')?.textContent?.trim()
 
   if (questionId) {
@@ -16,15 +17,27 @@ export function addSaveAnswerBtn (): HTMLButtonElement | null {
       saveBtn.id = 'saveAnswerBtn'
       saveBtn.textContent = 'Save answer'
       saveBtn.style.marginRight = 'auto'
+      saveBtn.style.cursor = 'pointer'
 
       btnContainer.prepend(saveBtn)
 
-      console.log('saveBtn', saveBtn)
-      return saveBtn
+      saveBtn.addEventListener('click', () => {
+        // Send message to background
+        const questionId = window.document.querySelector('.current-question-index')?.textContent?.trim() ?? ''
+        const serieId = new URLSearchParams(window.location.search).get('seriesId') || ''
+
+        const message: MessageSaveAnswer = {
+          type: MessageTypes.SAVE_ANSWER,
+          questionId,
+          serieId
+        }
+        chrome.runtime.sendMessage(message)
+      })
+
+      return 'success'
     }
   }
-
-  return null
+  return 'error'
 }
 
 /**

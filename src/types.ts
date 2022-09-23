@@ -5,10 +5,11 @@ export interface PageEntry {
   parent: string | null
 }
 
-export enum MessageTypes {
+export const enum MessageTypes {
   GET_NUMBER_ENTRIES,
   SEARCH_TEXT,
-  GET_ALL_ENTRIES
+  GET_ALL_ENTRIES,
+  SAVE_ANSWER
 }
 
 export interface Message {
@@ -17,6 +18,11 @@ export interface Message {
 export interface MessageSearchText extends Message {
   type: MessageTypes.SEARCH_TEXT
   text: string
+}
+export interface MessageSaveAnswer extends Message {
+  type: MessageTypes.SAVE_ANSWER
+  serieId: string
+  questionId: string
 }
 
 export interface ResponsePageEntries {

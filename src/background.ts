@@ -1,5 +1,5 @@
 import stychContentDb from '../public/data/stych-content.json'
-import { Message, MessageSearchText, MessageTypes, PageEntry } from './types'
+import { Message, MessageSaveAnswer, MessageSearchText, MessageTypes, PageEntry, QuestionSolution } from './types'
 import { Document } from 'flexsearch'
 
 // Init text search index
@@ -38,7 +38,36 @@ chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) =>
     case MessageTypes.GET_ALL_ENTRIES:
       sendResponse(stychContentDb)
       break
+    case MessageTypes.SAVE_ANSWER:
+      saveAnswStore((message as MessageSaveAnswer).questionId, (message as MessageSaveAnswer).serieId)
+      break
     default:
       sendResponse('error')
   }
 })
+
+// Save answer to storage
+function saveAnswStore (questionId: string, serieId: string) {
+  chrome.storage.sync.get('stychAnsw', async function (data) {
+    try {
+      const answ: QuestionSolution[] = data.stychAnsw ?? []
+
+      // Add if not exists
+      const entryExists = answ.find((a) => a.questionId === questionId && a.serieId === serieId)
+      if (!entryExists) {
+        answ.push({
+          serieId,
+          questionId,
+          date: Date.now()
+        })
+      }
+
+      chrome.storage.sync.set({ stychAnsw: answ })
+
+      return 'success'
+    } catch (e) {
+      console.error(e)
+      return 'error'
+    }
+  })
+}
