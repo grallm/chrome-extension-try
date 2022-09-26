@@ -3,6 +3,7 @@
   justify-content: space-between;
   margin: 20px 0;
 }
+
 button.bg-btn {
   height: 30px;
   width: 100px;
@@ -14,14 +15,15 @@ button.bg-btn {
 
 button.current {
   box-shadow: 0 0 0 2px white,
-              0 0 0 4px black;
+    0 0 0 4px black;
 }
 
 body {
   width: 300px;
 }
 
-form, input {
+form,
+input {
   width: 100%;
 }
 
@@ -29,6 +31,47 @@ form, input {
   font-size: 14px;
   padding-left: 0;
 }
-#resultContainer > li {
+
+#resultContainer>li {
   padding-bottom: 10px;
+}
+
+#answersContainer {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+#answersContainer>* {
+  font-size: 16px;
+  margin-left: 5px;
+}
+
+#answersContainer.rotate-0>* {
+  animation: .3s ease-in-out rotate-0 forwards;
+}
+
+#answersContainer.rotate-90>* {
+  animation: .3s ease-in-out rotate-90 forwards;
+}
+
+@keyframes rotate-90 {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(90deg);
+  }
+}
+
+@keyframes rotate-0 {
+  0% {
+    transform: rotate(90deg);
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
 }

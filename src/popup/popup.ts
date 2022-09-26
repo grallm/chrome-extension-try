@@ -1,5 +1,5 @@
 import { getPagesFromTab } from '../dom/stych-fetch'
-import { Message, MessageSearchText, MessageTypes, PageEntry } from '../types'
+import { Message, MessageSearchText, MessageTypes, PageEntry, QuestionSolution } from '../types'
 
 // Add number of entries in popup
 // Send message to background
@@ -77,3 +77,32 @@ document.querySelector('#searchInput')?.addEventListener('input', async (e) => {
 })
 // Block form submit
 document.querySelector('#searchForm')?.addEventListener('submit', e => e.preventDefault())
+
+/**
+ * Load saved answers
+ */
+const loadAnswers = async () => {
+  const answers = (await chrome.storage.sync.get('stychAnsw')).stychAnsw as QuestionSolution[] | undefined
+  const answersContainer = document.querySelector('#answersContainer')
+
+  if (answersContainer && answers) {
+    // const answersHtml = (answers as QuestionSolution[]).map(({ title, link }) => `<li><a target="_blank" href="${link}">${title}</a></li>`)
+    // answersContainer.innerHTML = answersHtml.join('')
+    answersContainer.innerHTML = `${answers.length} saved answers <span style="font-size: 16px;">➜</span>`
+
+    // Add opening effects
+    let answOpen = false
+    answersContainer.addEventListener('click', () => {
+      answOpen = !answOpen
+
+      if (answOpen) {
+        answersContainer.classList.add('rotate-90')
+        answersContainer.classList.remove('rotate-0')
+      } else {
+        answersContainer.classList.add('rotate-0')
+        answersContainer.classList.remove('rotate-90')
+      }
+    })
+  }
+}
+loadAnswers()

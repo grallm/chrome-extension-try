@@ -65,12 +65,9 @@ function saveAnswStore (questionId: string, serieId: string) {
       }
 
       chrome.storage.sync.set({ stychAnsw: answ })
-
-      return 'success'
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error(e)
-      return 'error'
     }
   })
 }
