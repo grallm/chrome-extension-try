@@ -36,8 +36,10 @@ input {
   padding-bottom: 10px;
 }
 
+/* SAVED ANSWERS */
 #answersContainer {
   display: flex;
+  flex-direction: column;
   align-items: center;
   cursor: pointer;
   margin-bottom: 10px;
@@ -45,14 +47,37 @@ input {
 
 #answersContainer>* {
   font-size: 16px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+#answIcon {
+  width: 16px;
+  height: 16px;
   margin-left: 5px;
 }
 
-#answersContainer.rotate-0>* {
+#answersContainer>ul {
+  transition: all .3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#answersContainer>ul>li {
+  width: 100%;
+}
+
+.hidden {
+  height: 0 !important;
+}
+
+.rotate-0 {
   animation: .3s ease-in-out rotate-0 forwards;
 }
 
-#answersContainer.rotate-90>* {
+.rotate-90 {
   animation: .3s ease-in-out rotate-90 forwards;
 }
 

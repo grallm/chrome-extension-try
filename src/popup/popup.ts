@@ -84,24 +84,37 @@ document.querySelector('#searchForm')?.addEventListener('submit', e => e.prevent
 const loadAnswers = async () => {
   const answers = (await chrome.storage.sync.get('stychAnsw')).stychAnsw as QuestionSolution[] | undefined
   const answersContainer = document.querySelector('#answersContainer')
+  const answTitle = document.querySelector('#answersContainer > div')
+  const answLst = document.querySelector('#answersContainer > ul') as null | HTMLUListElement
 
-  if (answersContainer && answers) {
-    // const answersHtml = (answers as QuestionSolution[]).map(({ title, link }) => `<li><a target="_blank" href="${link}">${title}</a></li>`)
-    // answersContainer.innerHTML = answersHtml.join('')
-    answersContainer.innerHTML = `${answers.length} saved answers <span style="font-size: 16px;">➜</span>`
+  if (answersContainer && answers && answTitle && answLst) {
+    const answersHtml = (answers as QuestionSolution[]).map(({ date, questionId, serieId }) =>
+      `<li><a target="_blank" href="https://application.prepacode-enpc.fr/series/${serieId}#question-${questionId}">Q${questionId} (${date})</a></li>`
+    )
+    answLst.innerHTML = answersHtml.join('')
+    answLst.style.height = 19 * answers.length + 'px'
+
+    answTitle.innerHTML = `${answers.length} saved answers <div id="answIcon">➜</div>`
 
     // Add opening effects
     let answOpen = false
     answersContainer.addEventListener('click', () => {
       answOpen = !answOpen
 
-      if (answOpen) {
-        answersContainer.classList.add('rotate-90')
-        answersContainer.classList.remove('rotate-0')
-      } else {
-        answersContainer.classList.add('rotate-0')
-        answersContainer.classList.remove('rotate-90')
+      // Rotate icon
+      const answIcon = document.querySelector('#answIcon')
+      if (answIcon) {
+        if (answOpen) {
+          answIcon.classList.add('rotate-90')
+          answIcon.classList.remove('rotate-0')
+        } else {
+          answIcon.classList.add('rotate-0')
+          answIcon.classList.remove('rotate-90')
+        }
       }
+
+      // Display list
+      answLst.classList.toggle('hidden')
     })
   }
 }
