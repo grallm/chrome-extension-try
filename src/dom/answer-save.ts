@@ -1,4 +1,4 @@
-import { MessageSaveAnswer, MessageTypes } from '../types'
+import { MessageSaveAnswer, MessageTypes, QuestionSolution } from '../types'
 
 /**
  * Add a button to save answer
@@ -50,4 +50,40 @@ export function getQuestionId (): string | null {
   const questionId = window.document.querySelector('.current-question-index')?.textContent?.trim()
 
   return questionId ?? null
+}
+
+/**
+ * Add remove button
+ * Scroll to ID
+ */
+export function addRemoveBtnAndScroll () {
+  const addBtnInterval = setInterval(() => {
+    // Check if correct page loaded
+    const scoreDiv = window.document.querySelector('.series-score')
+
+    if (scoreDiv) {
+      clearInterval(addBtnInterval)
+
+      const serieIdRgx = /application\.prepacode-enpc\.fr\/series\/(.+)\/?/.exec(window.location.href)?.[1]
+
+      if (serieIdRgx) {
+        chrome.storage.sync.get('stychAnsw', function (data) {
+          const answers: QuestionSolution[] = data.stychAnsw ?? []
+          for (const { questionId } of answers) {
+            const btnContainer = document.querySelector(`#question-${questionId} div.padding-20px.grid-left`)
+
+            if (btnContainer) {
+              btnContainer.innerHTML += `<button style="height: 50px; cursor: pointer" class="remove-answ-btn" data-question-id="${questionId}">Remove answer</button>`
+            }
+          }
+
+          // Click listener
+          // TODO
+        })
+      }
+
+      // Scroll
+      // TODO
+    }
+  }, 500)
 }

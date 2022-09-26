@@ -1,7 +1,7 @@
 import stychContentDb from '../public/data/stych-content.json'
 import { Message, MessageSaveAnswer, MessageSearchText, MessageTypes, PageEntry, QuestionSolution } from './types'
 import { Document } from 'flexsearch'
-import { addSaveAnswerBtn } from './dom/answer-save'
+import { addRemoveBtnAndScroll, addSaveAnswerBtn } from './dom/answer-save'
 
 // Init text search index
 const index = new Document<PageEntry, true>({
@@ -77,11 +77,20 @@ chrome.tabs.onUpdated.addListener(async function (tabId, changeInfo) {
   if (changeInfo.status === 'complete') {
     // Check if correct tab and URL
     chrome.tabs.get(tabId, async function (tab) {
-      if (tab.id && tab.url?.includes('application.prepacode-enpc.fr/player?seriesId=')) {
+      if (tab.id && tab.url) {
+        // Execute function depending on URL
+        // Default : add save answer button
+        let funcToExec = addSaveAnswerBtn
+
+        // Add remove button
+        if (tab.url.includes('application.prepacode-enpc.fr/series/')) {
+          funcToExec = addRemoveBtnAndScroll
+        }
+
         // Execute script to add button
         chrome.scripting.executeScript({
           target: { tabId: tab.id },
-          func: addSaveAnswerBtn
+          func: funcToExec
         })
       }
     }
