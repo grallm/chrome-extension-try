@@ -89,7 +89,7 @@ const loadAnswers = async () => {
 
   if (answersContainer && answers && answTitle && answLst) {
     const answersHtml = (answers as QuestionSolution[]).map(({ date, questionId, serieId }) =>
-      `<li><a target="_blank" href="https://application.prepacode-enpc.fr/series/${serieId}#question-${questionId}">Q${questionId} (${date})</a></li>`
+      `<li><a target="_blank" href="https://application.prepacode-enpc.fr/series/${serieId}#question-${questionId}">Q${questionId} (${new Date(date).toLocaleString()})</a></li>`
     )
     answLst.innerHTML = answersHtml.join('')
     answLst.style.height = 19 * answers.length + 'px'
