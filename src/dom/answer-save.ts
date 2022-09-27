@@ -93,7 +93,10 @@ export function addRemoveBtnAndScroll () {
                   questionId,
                   serieId
                 }
-                chrome.runtime.sendMessage(message)
+                chrome.runtime.sendMessage(message).then(() => {
+                  // Remove buttons and display again
+                  addRemoveBtnAndScroll()
+                })
               }
             })
           }
