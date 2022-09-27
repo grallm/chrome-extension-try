@@ -1,7 +1,8 @@
-import stychContentDb from '../public/data/stych-content.json'
-import { Message, MessageSaveAnswer, MessageSearchText, MessageTypes, PageEntry, QuestionSolution } from './types'
+import stychContentDb from '../../public/data/stych-content.json'
+import { Message, MessageRemoveAnswer, MessageSaveAnswer, MessageSearchText, MessageTypes, PageEntry } from '../types'
 import { Document } from 'flexsearch'
-import { addRemoveBtnAndScroll, addSaveAnswerBtn } from './dom/answer-save'
+import { addRemoveBtnAndScroll, addSaveAnswerBtn } from '../dom/answer-save'
+import { removeAnswStore, saveAnswStore } from './answ-save-storage'
 
 // Init text search index
 const index = new Document<PageEntry, true>({
@@ -43,34 +44,13 @@ chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) =>
     case MessageTypes.SAVE_ANSWER:
       saveAnswStore((message as MessageSaveAnswer).questionId, (message as MessageSaveAnswer).serieId)
       break
+    case MessageTypes.REMOVE_ANSWER:
+      removeAnswStore((message as MessageRemoveAnswer).questionId, (message as MessageRemoveAnswer).serieId)
+      break
     default:
       sendResponse('error')
   }
 })
-
-// Save answer to storage
-function saveAnswStore (questionId: string, serieId: string) {
-  chrome.storage.sync.get('stychAnsw', async function (data) {
-    try {
-      const answ: QuestionSolution[] = data.stychAnsw ?? []
-
-      // Add if not exists
-      const entryExists = answ.find((a) => a.questionId === questionId && a.serieId === serieId)
-      if (!entryExists) {
-        answ.push({
-          serieId,
-          questionId,
-          date: Date.now()
-        })
-      }
-
-      chrome.storage.sync.set({ stychAnsw: answ })
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error(e)
-    }
-  })
-}
 
 // Add save answer button when correct URL loads
 chrome.tabs.onUpdated.addListener(async function (tabId, changeInfo) {

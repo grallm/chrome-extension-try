@@ -8,7 +8,7 @@ module.exports = {
   entry: {
     popup: path.join(srcDir, 'popup/popup.ts'),
     options: path.join(srcDir, 'options/options.ts'),
-    background: path.join(srcDir, 'background.ts')
+    background: path.join(srcDir, 'background/background.ts')
   },
   output: {
     path: path.join(__dirname, 'dist'),

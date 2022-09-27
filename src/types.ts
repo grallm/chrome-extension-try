@@ -9,7 +9,8 @@ export const enum MessageTypes {
   GET_NUMBER_ENTRIES,
   SEARCH_TEXT,
   GET_ALL_ENTRIES,
-  SAVE_ANSWER
+  SAVE_ANSWER,
+  REMOVE_ANSWER
 }
 
 export interface Message {
@@ -23,6 +24,9 @@ export interface MessageSaveAnswer extends Message {
   type: MessageTypes.SAVE_ANSWER
   serieId: string
   questionId: string
+}
+export interface MessageRemoveAnswer extends Omit<MessageSaveAnswer, 'type'> {
+  type: MessageTypes.REMOVE_ANSWER
 }
 
 export interface ResponsePageEntries {
