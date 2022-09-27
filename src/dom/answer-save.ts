@@ -64,7 +64,7 @@ export function addRemoveBtnAndScroll () {
     if (scoreDiv) {
       clearInterval(addBtnInterval)
 
-      const serieId = /application\.prepacode-enpc\.fr\/series\/([a-z0-9]+)/i.exec(window.location.href)?.[1]
+      const [, serieId, urlQuestionId] = /application\.prepacode-enpc\.fr\/series\/([a-z0-9]+)\/?(#question-\d+)/i.exec(window.location.href) || []
 
       if (serieId) {
         chrome.storage.sync.get('stychAnsw', function (data) {
@@ -99,6 +99,14 @@ export function addRemoveBtnAndScroll () {
                 })
               }
             })
+          }
+
+          // Scroll to ID
+          if (urlQuestionId) {
+            const questionDiv = document.querySelector(urlQuestionId)
+            if (questionDiv) {
+              questionDiv.scrollIntoView()
+            }
           }
         })
       }
