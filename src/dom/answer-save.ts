@@ -1,9 +1,8 @@
 import { MessageRemoveAnswer, MessageSaveAnswer, MessageTypes, QuestionSolution } from '../types'
 
 /**
- * Add a button to save answer
+ * Add a button to save answer, and one for previous question
  */
-
 export function addSaveAnswerBtn () {
   const addBtnInterval = setInterval(() => {
     // Check if correct page loaded
@@ -18,17 +17,31 @@ export function addSaveAnswerBtn () {
       const btnContainer = document.querySelector('.answers')
 
       if (btnContainer) {
+        const customBtnContainer = document.createElement('div')
+        customBtnContainer.style.display = 'flex'
+        customBtnContainer.style.justifyContent = 'start'
+        customBtnContainer.style.width = '100%'
+
         const saveBtn = document.createElement('button')
         saveBtn.id = 'saveAnswerBtn'
         saveBtn.textContent = 'Save answer'
-        saveBtn.style.marginRight = 'auto'
         saveBtn.style.cursor = 'pointer'
 
-        btnContainer.prepend(saveBtn)
+        const savePrevBtn = saveBtn.cloneNode(true) as HTMLButtonElement
+        savePrevBtn.textContent = 'Save previous answer'
+        savePrevBtn.style.marginRight = '10px'
 
-        saveBtn.addEventListener('click', () => {
+        customBtnContainer.prepend(savePrevBtn)
+        customBtnContainer.append(saveBtn)
+
+        const saveAnswerHandler = (previous = false) => {
           // Send message to background
-          const questionId = window.document.querySelector('.current-question-index')?.textContent?.trim() ?? ''
+          let questionId = window.document.querySelector('.current-question-index')?.textContent?.trim() ?? ''
+          questionId = questionId && previous ? (parseInt(questionId) - 1).toString() : questionId
+
+          // Don't add previous answer if none
+          if (questionId === '0') return
+
           const serieId = new URLSearchParams(window.location.search).get('seriesId') || ''
 
           const message: MessageSaveAnswer = {
@@ -37,7 +50,12 @@ export function addSaveAnswerBtn () {
             serieId
           }
           chrome.runtime.sendMessage(message)
-        })
+        }
+
+        saveBtn.addEventListener('click', () => saveAnswerHandler())
+        savePrevBtn.addEventListener('click', () => saveAnswerHandler(true))
+
+        btnContainer.prepend(customBtnContainer)
       }
     }
   }, 500)
