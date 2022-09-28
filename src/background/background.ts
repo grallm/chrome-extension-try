@@ -59,21 +59,24 @@ chrome.tabs.onUpdated.addListener(async function (tabId, changeInfo) {
     chrome.tabs.get(tabId, async function (tab) {
       if (tab.id && tab.url) {
         // Execute function depending on URL
-        // Default : add save answer button
-        let funcToExec = addSaveAnswerBtn
+        let funcToExec
 
         // Add remove button
         if (tab.url.includes('application.prepacode-enpc.fr/series/')) {
           funcToExec = addRemoveBtnAndScroll
+        } else if (tab.url.includes('application.prepacode-enpc.fr/player?seriesId=')) {
+          // Add save answer button
+          funcToExec = addSaveAnswerBtn
         }
 
-        // Execute script to add button
-        chrome.scripting.executeScript({
-          target: { tabId: tab.id },
-          func: funcToExec
-        })
+        // Execute script in page
+        if (funcToExec) {
+          chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            func: funcToExec
+          })
+        }
       }
-    }
-    )
+    })
   }
 })
